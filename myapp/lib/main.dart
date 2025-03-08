@@ -24,8 +24,12 @@ class Mylist extends StatefulWidget{
   State<Mylist> createState() => _Mylist();
 }
 
+class ItemList{
+  static List<String> todoList = []; 
+}
+
+
 class _Mylist extends State<Mylist>{
-  List<String> item1 = [];
   TextEditingController inputController = TextEditingController();
   String inputText = "";
   void plusitemlist() async{
@@ -61,7 +65,7 @@ class _Mylist extends State<Mylist>{
       }
     );
     setState((){
-       item1.add(inputController.text);
+       ItemList.todoList.add(inputController.text);
     });
 }
   @override
@@ -77,9 +81,21 @@ class _Mylist extends State<Mylist>{
           ),
         ),
         body: ListView.builder(
-          itemCount: item1.length,
+          itemCount: ItemList.todoList.length,
           itemBuilder: (BuildContext context, int index){
-            return  TodoItemList(itemText: item1[index], index: index + 1, devicesize: MediaQuery.of(context).size);
+            return Dismissible(
+              background: Container(color: Colors.red,),
+              direction: DismissDirection.startToEnd,
+              onDismissed: (direction){
+                setState(() {
+                  if(direction == DismissDirection.startToEnd){
+                    ItemList.todoList.removeAt(index);
+                  }
+                });
+              },
+              child: TodoItemList(itemText: ItemList.todoList[index], index: index + 1, devicesize: MediaQuery.of(context).size),
+              key: Key(ItemList.todoList[index]),
+            );
           },
         ),
         floatingActionButton: FloatingActionButton(
@@ -115,7 +131,12 @@ class _TodoItemList extends State<TodoItemList>{
       activationFlag = !activationFlag;
       boxIcon = activationFlag? Icon(Icons.check_box_outline_blank) : Icon(Icons.check_box);
     });
-    
+  }
+  void deleteData(){
+    setState(() {
+      ItemList.todoList .removeAt(widget.index - 1);
+      
+    });
   }
   @override
   Widget build(BuildContext context){
@@ -140,10 +161,6 @@ class _TodoItemList extends State<TodoItemList>{
                   onPressed:activationFlagChange,
                   icon: boxIcon,
                   ),
-                  IconButton(
-                  onPressed:() {},
-                  icon: Icon(Icons.delete),
-                  )
                 ],
               )
             ]
