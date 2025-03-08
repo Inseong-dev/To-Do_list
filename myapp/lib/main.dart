@@ -1,4 +1,4 @@
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -48,7 +48,7 @@ class _Mylist extends State<Mylist>{
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              TextFormField(
                 controller: inputController,
               ),
             ],
@@ -66,17 +66,25 @@ class _Mylist extends State<Mylist>{
     );
     setState((){
        ItemList.todoList.add(inputController.text);
+       inputController.clear();
     });
 }
   @override
+  void dispose(){
+    inputController.dispose();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context){
+    var now = new DateTime.now();
+    String formatDate = DateFormat('yy/MM/dd').format(now);
     return Scaffold(
         appBar: AppBar(
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text("ToDoList For me"),
-              Text("2025.02.18"),
+              Text(formatDate),
             ],
           ),
         ),
